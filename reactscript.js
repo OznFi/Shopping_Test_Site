@@ -15,8 +15,8 @@ import * as Mod from "./like_button.js";
 
 function top() {
     Mod.suprend();
-    Mod.itemrend(false);
-    Mod.barrend();
+    //Mod.itemrend(false);
+    //Mod.barrend();
     Mod.sortbarrend(qtags);
     Mod.priceradiorend();
 }

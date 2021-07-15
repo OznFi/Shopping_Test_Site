@@ -1,8 +1,34 @@
 body{
     margin:0;
+    font-family:Arial;
 }
-.comment{
-    background-color:aqua;
+.star_rating {
+    display: flex;
+    margin-right: 5px;
+}
+.star_rating_container {
+    display: flex;
+    margin-top: 10px;
+    align-items: center;
+}
+.rating_star {
+    position: relative;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+}
+.rating_star svg {
+    width: 24px;
+    height: 24px;
+}
+.activestar svg path {
+    fill: gold !important;
+}
+.fa-check{
+    color:lawngreen;
+}
+.comment {
+    background-color: aqua;
 }
 #topbar{
     position:fixed;
@@ -24,13 +50,13 @@ body{
     width: 100%;
     justify-content: space-around;
     align-items:center;
-    color:forestgreen;
+    color:orange;
     font-size:18px;
 }
 #upperbar input{
     width:100%;
     height:20px;
-    border:3px solid green;
+    border:3px solid rgba(0,0,0,0.3);
     border-radius:5px;
 }
 .search_container{
@@ -39,8 +65,62 @@ body{
 .user_options {
     display: flex;
 }
-.user_options div{
-    margin-right:20px;
+.logged_user_options {
+    display: flex;
+    flex-direction: column;
+    margin-top: -20px;
+    width: 200px;
+    font-size: 17px;
+    color: orange;
+    text-shadow: -0.5px -0.5px 0 black, 0.5px -0.5px 0 black, -0.5px 0.5px 0 black, 0.5px 0.5px 0 black;
+}
+.user_container {
+    height: 20px;
+    position:relative;
+    text-align:center;
+    line-height:30px;
+    margin:0;
+    padding: 5px;
+    border: 2px solid orange;
+    border-radius:5px 5px 0 0;
+    background-color: white;
+}
+.user_owned_basket {
+    border: 2px solid orange;
+    border-radius: 0 0 5px 5px;
+    outline: none;
+    height:25px;
+    text-align:center;
+    background-color: white;
+    border-top: white;
+    position: absolute;
+    margin-top: -2px;
+    z-index: 2;
+    width: 200px;
+    box-sizing:border-box;
+    white-space: pre-wrap;
+    transition:color 0.3s ease;
+}
+.user_owned_basket a{
+    height:20px;
+    text-decoration:none; font-weight:500 !important; 
+}
+.user_owned_basket i{
+    width:25px; height:25px; 
+    color:orange;
+    padding-right:2px;
+    transition:color 0.3s ease;
+}
+.user_owned_basket:hover{
+    cursor:pointer;
+    color:darkorange;
+    text-decoration:underline;
+}
+.user_owned_basket:hover i{
+    color:orangered;
+}
+.user_options div {
+    margin-right: 20px;
 }
 #lowerbar {
     margin-top:20px;
@@ -56,19 +136,43 @@ body{
 #lowerbar a{
     margin-bottom:0;
     text-decoration:none;
-    color:darkgreen;
+    color:orange;
     border-bottom:transparent 3px solid;
 }
 #lowerbar a:hover{
     border-bottom:red 3px solid;
 }
-
-#page_container{
-    display:flex;
-    width:1260px;
-    margin-top:130px;
-    margin-left:auto;
-    margin-right:auto;
+#dynamic_login_section{
+    display:none;
+    position:fixed; top:0;left:0;right:0;bottom:0;
+    width:100%; height:100%;
+    z-index:9999999;
+    background-color:rgba(0,0,0,0.5);
+}
+#dynamic_login_section > button{
+    border:0.5px solid rgba(0,0,0,0.3);
+    border-radius:50%;
+    outline:none;
+    width:30px; height:30px;
+}
+#dynamic_login_section form{
+    width:40%;height:50%; margin-left:auto;margin-right:auto;
+    padding:15px;
+    z-index:99999999;
+    background-color:white;
+    display:flex;flex-direction:column;
+    animation:sliding_emerge 1s ease;
+}
+@keyframes sliding_emerge{
+    0%{opacity:0; top:-50%;}
+    100%{opacity:1; top:10%;}
+}
+#page_container {
+    display: flex;
+    width: 1260px;
+    margin-top: 130px;
+    margin-left: auto;
+    margin-right: auto;
 }
 #categorization{
     vertical-align:top; /*why is this needed?*/
@@ -165,9 +269,13 @@ body{
     transition: 0.1s ease;
     transition-delay:0.1s;
 }
-.item_column ul{
-    padding:0;
-    margin:0;
+.item_brandname{
+    font-size:17px;
+    margin-right:10px;
+}
+.item_column ul {
+    padding: 0;
+    margin: 0;
 }
 .item_column ul li:first-child{
     margin-top:10px;
@@ -185,6 +293,9 @@ body{
     margin-left:10px;
     transition: 0.3s ease;
 }
+#itemsortbar{
+
+}
 #itemmainsort {
     display: flex;
     justify-content: space-between;
@@ -194,7 +305,7 @@ body{
     padding-right: 10px;
 }
 #itemsection {
-    width: 1170px;
+    width: (100% - 200px);
     margin-left:200px;
     position:absolute;
 }
@@ -211,7 +322,6 @@ body{
 #sortselection{
     height:25px;
     width:150px;
-    margin-right:110px;
 }
 .sorttagname {
     border: 1px solid gray;
@@ -229,12 +339,13 @@ body{
 .items {
     display: inline-flex;
     flex-wrap: wrap;
-    width:1170px;
+    justify-content:space-between;
     /*width: 1260px !important;
     position:absolute;*/
 }
 .item{
     width:245px; /**/
+    flex:1;
     box-sizing:border-box;
     height:400px;
     display:inline-flex;
@@ -245,7 +356,8 @@ body{
     margin:0 0 15px 15px;
 }
 .item:hover{
-    box-shadow:1px 1px 2px, -1px -1px 2px;
+    border-color:orange;
+    box-shadow:1px 1px 2px orange, -1px -1px 2px orange;
 }
 .item:hover img{
     transform:scale(1.3);
@@ -270,6 +382,7 @@ body{
 .itemdescript{
     display:flex;
     flex-direction:column;
+    box-sizing:border-box;
     margin:auto;
     width:100%;
 }
@@ -282,6 +395,8 @@ body{
 }
 .itemtitle p{
     margin:0;
+    height:34px; width:223px; line-height:17px;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
 }
 .itemstars{
     margin:0;
@@ -295,7 +410,7 @@ body{
     color:white;
     margin-top:10px;
 }
-.itembuttons button:hover{
+.addbasketbutton:hover{
     cursor:pointer;
     border:2px solid black;
     background-color:orange;
@@ -308,9 +423,25 @@ body{
 .addbasketbutton{
     height:32px;
     background-color:white;
-    border-radius:0;
+    border-radius:7px;
     border:2px solid blue;
     font-weight:bold;
     width:70%;
     transition:color 0.3s ease, background-color 0.3s ease;
+}
+.addeditem {
+    height: 32px;
+    background-color: orange;
+    border-radius: 7px;
+    color:white;
+    border: 2px solid blue;
+    font-weight: bold;
+    width: 70%;
+    transition: color 0.3s ease, background-color 0.3s ease;
+}
+.addeditem:hover {
+    cursor: pointer;
+    border: 2px solid black;
+    background-color: darkorange;
+    color: white;
 }

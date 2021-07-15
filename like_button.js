@@ -19,9 +19,12 @@ class LikeButton extends React.Component {
     }
 }*/
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+//let domContainer = document.querySelector('#like_button_container');
+//ReactDOM.render(<LikeButton />, domContainer);
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -29,89 +32,6 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var Comment = function (_React$Component) {
-    _inherits(Comment, _React$Component);
-
-    function Comment(props) {
-        _classCallCheck(this, Comment);
-
-        var _this = _possibleConstructorReturn(this, (Comment.__proto__ || Object.getPrototypeOf(Comment)).call(this, props));
-
-        _this.state = { //normally it would be better to wrap this inside another classcomp that would pass the necessary values through props
-            avatar: "Acid_Cloud.png",
-            commentername: "Me",
-            commentdate: "5 days ago",
-            commenttext: "Some random text here",
-            reply: false
-        };
-        return _this;
-    }
-
-    _createClass(Comment, [{
-        key: "render",
-        value: function render() {
-            return React.createElement(
-                "div",
-                { "class": "comment" },
-                React.createElement(Commenter, { avatar: this.state.avatar, commentername: this.state.commentername, commentdate: this.state.commentdate }),
-                React.createElement(Commentbody, { commenttext: this.state.commenttext })
-            );
-        }
-    }]);
-
-    return Comment;
-}(React.Component);
-
-function Commenter(props) {
-    return React.createElement(
-        "div",
-        { "class": "commenter" },
-        React.createElement("img", { "class": "commenteravatar", src: props.avatar }),
-        React.createElement(
-            "a",
-            { href: "#", "class": "commentername" },
-            props.commentername
-        ),
-        React.createElement(
-            "span",
-            { "class": "commentdate" },
-            props.commentdate
-        )
-    );
-}
-function Commentbody(props) {
-    return React.createElement(
-        "div",
-        { "class": "commentbody" },
-        React.createElement(
-            "span",
-            null,
-            props.commenttext
-        ),
-        React.createElement(
-            "div",
-            { "class": "commentlikereply" },
-            React.createElement(
-                "a",
-                { href: "#", "class": "commentlike" },
-                "Up+"
-            ),
-            React.createElement(
-                "a",
-                { href: "#", "class": "commentdislike" },
-                " Down-"
-            ),
-            React.createElement(
-                "a",
-                { href: "#", "class": "commentreply" },
-                "Reply"
-            )
-        )
-    );
-}
-
-//let domContainer = document.querySelector('#like_button_container');
-//ReactDOM.render(<LikeButton />, domContainer);
 var avatararray = ["Acid_Cloud.png", "Acid_Cloud.png", "Acid_Cloud.png"];
 var commenternamearr = ["Jenny", "Joe", "Jack"];
 var commentdatearr = ["5 days ago", "2 days ago", "4 days ago"];
@@ -119,12 +39,7 @@ var commenttextarr = ["Some text", "Some text", "Some text"];
 var container = [];
 function synchdivs() {
     var divnum = 3;
-
     for (var i = 0; i < divnum; i++) {
-        //var shell = document.createElement("div");
-        //shell.setAttribute("id", "shell");
-        //document.getElementById("shells").appendChild(shell);
-        //let domContainerex = document.querySelector('#shell');
         container.push(React.createElement(Comment, { comavatar: avatararray[i], comcommentername: commenternamearr[i], comcommentdate: commentdatearr[i], comcommenttext: commenttextarr[i] }));
         alert(_typeof(container[0]));
         //shell.removeAttribute("id");
@@ -136,24 +51,217 @@ function synchdivs() {
 function lmao() {
     var domContainer2 = document.querySelector('#comments');
     ReactDOM.render(React.createElement(Comment, null), domContainer2);
-    //alert("lol");
 }
-//let domContainer2 = document.querySelector('#comments');
-//ReactDOM.render(<Comment />, domContainer2);
-//window.addEventListener("load", lmao);
 //////////
+/*this variable is for the user but it is obviously very redundant and inefficient since most of this
+ would've been fetched efficiently from the db*/
+var logged_user = { login_state: false, user_name: '', user_basket: [] };
+var qtags = { brands: [], pricerange: [] };var qstring = '';
+var items;
+function initial_server_req() {
+    var req = new XMLHttpRequest();
+    req.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            var res = this.responseText;
+            alert(res);
+            logged_user = JSON.parse(res);
+            alert(JSON.parse(res).user_name);
+            barrend();
+            //itemrend(false);
+        }
+    };
+    req.open('GET', 'searched_products.php?sessionvals=1');
+    req.send();
+}
+initial_server_req();
+
+function query_search() {
+    var brands = '';
+    qstring = '';
+    for (var i = 0; i < qtags.brands.length; i++) {
+        //qstring += '&brand' + i + '=' + qtags.brands;
+        if (i == qtags.brands.length - 1) {
+            brands += '&brand' + i + '=\'' + qtags.brands[i] + '\'';
+        } else {
+            brands += '&brand' + i + '=\'' + qtags.brands[i] + '\',';
+        }
+    }
+    if (brands != '' && brands != null) {
+        qstring = brands;
+    }
+    if (qtags.pricerange[0] != null && qtags.pricerange[0] != '') {
+        qstring += '&prrangelow=' + qtags.pricerange[0] + "&prrangehigh=" + qtags.pricerange[1];
+    }
+    var req = new XMLHttpRequest();
+    req.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            var res = this.responseText;
+            alert(res);
+            items = JSON.parse(res);
+            itemrend(false);
+        }
+    };
+    req.open('GET', 'searched_products.php?qprod=1' + qstring);
+    req.send();
+}
+function initial_item_load() {
+    //alert('yes')
+    var q;
+    var req = new XMLHttpRequest();var qindic;
+    if (q == '' || q == null) {
+        qindic = 'false';
+    } else {
+        qindic = q; //will form query
+    }
+    req.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            var res = this.responseText;
+            alert(res);
+            items = JSON.parse(res);
+            itemrend(false);
+        }
+    };
+    req.open('GET', 'searched_products.php?initialitemreq=1');
+    req.send();
+}
+initial_item_load();
 var fil = { brand: [], name: [], price: null, rating: null };
-var items = [{ brand: "lmao", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "Radeon", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "Nvidia", name: "Red Mouse", price: 1000.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }, { brand: "AMD", name: "Blue Mouse", price: 400.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png" }];
+/*var items = [
+    { brand: "lmao", name: "Blue Mouse and some really long text asda sd a s d a s d a s d asd", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png", productid:66135},
+    { brand: "Radeon", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png", productid: 68646},
+    { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png", productid: 68946},
+    { brand: "AMD", name: "Blue Mouse", price: 165.99, rating: 4.4, ratingnumber: 145, itemimg: "Acid_Cloud.png", productid: 78646 },
+    
+];*/
+function check_login() {
+    var nam = document.getElementById('login_name_input').value.trim();
+    var pas = document.getElementById('login_password_input').value.trim();
+    //alert('searched_products.php?loginusername=' + nam + "&loginuserpassword=" + pas);
+    if (nam == '' || nam == null || pas == '' || pas == null) {
+        alert('Please Fill both fields');
+    } else {
+        var dataf = new FormData();
+        dataf.append('loginusername', nam);
+        dataf.append('loginuserpassword', pas);
+        var req = new XMLHttpRequest();
+        //req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        req.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                var res = this.responseText;
+                if (res == 'false') {
+                    alert('Username or password is wrong');
+                } else {
+                    alert(res);
+                    window.location.reload();
+                }
+            }
+        };
+        req.open('POST', 'searched_products.php', true);
+        req.send(dataf);
+    }
+}
+function Loginbox(props) {
+
+    return React.createElement(
+        "div",
+        { id: "dynamic_login_section", onClick: toggle_login },
+        React.createElement(
+            "button",
+            { type: "button" },
+            React.createElement("i", { "class": "fa fa-times" })
+        ),
+        React.createElement(
+            "form",
+            { onClick: function onClick(e) {
+                    e.stopPropagation();
+                } },
+            React.createElement(
+                "label",
+                { "for": "username" },
+                "Username"
+            ),
+            React.createElement("input", { name: "loginusername", id: "login_name_input" }),
+            React.createElement(
+                "label",
+                { "for": "userpassword" },
+                "Password"
+            ),
+            React.createElement("input", { name: "loginuserpassword", id: "login_password_input" }),
+            React.createElement(
+                "button",
+                { type: "button", onClick: check_login },
+                "Login"
+            )
+        )
+    );
+}
+function add_basket(e) {
+    var itemid = e.target.parentElement.parentElement.parentElement.id;
+    var jsoitem;var basketstate = false;
+    for (var i = 0; i < items.length; i++) {
+        if (items[i].productid == itemid) {
+            logged_user.user_basket.push(items[i]);
+            jsoitem = JSON.stringify(items[i]);
+            barrend();
+            itemrend(false);
+        }
+    }
+
+    var dataf = new FormData();
+    dataf.append('addtobasket', 1);
+    dataf.append('basket', jsoitem);
+    var req = new XMLHttpRequest();
+    //req.setRequestHeader("Content-type", "application/json");
+    req.open('POST', 'searched_products.php', true);
+    req.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            var res = this.responseText;
+            //alert(res);
+        }
+    };
+    req.send(dataf);
+}
+function remove_basket(e) {
+    var itemid = e.target.parentElement.parentElement.parentElement.id;
+    var jsoitem;
+    for (var i = 0; i < logged_user.user_basket.length; i++) {
+        //alert('it id is =' + itemid + ' and ' + logged_user.user_basket[i].productid);
+        if (itemid == logged_user.user_basket[i].productid) {
+            //logged_user.user_basket.splice(i, 1);
+            jsoitem = JSON.stringify(logged_user.user_basket[i]);
+            logged_user.user_basket.splice(i, 1);
+            barrend();
+            itemrend(false);
+        }
+    }
+    var dataf = new FormData();
+    dataf.append('removefrombasket', 1);
+    dataf.append('removeitem', jsoitem);
+    var req = new XMLHttpRequest();
+    //req.setRequestHeader("Content-type", "application/json");
+    req.open('POST', 'searched_products.php', true);
+    req.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            var res = this.responseText;
+            //alert(res);
+        }
+    };
+    req.send(dataf);
+}
 function Itemstack(props) {
     var its = props.itemsa; //obviouslty it needs another function for handling the data
-    var itemcont = [];
+    var itemcont = [];var indexarray = [];
+    for (var i = 0; i < logged_user.user_basket.length; i++) {
+        indexarray.push(logged_user.user_basket[i].productid);
+    }
     for (var o = 0; o < its.length; o++) {
-        itemcont.push(React.createElement(Item, { content: its[o] }));
+        itemcont.push(React.createElement(Item, { content: its[o], indexes: indexarray, itemnum: o }));
         //alert(its[0].brand);
     }
     return React.createElement(
         "div",
         null,
+        React.createElement(Loginbox, null),
         itemcont
     );
 }
@@ -161,9 +269,11 @@ function Item(props) {
 
     return React.createElement(
         "div",
-        { "class": "item" },
+        { "class": "item", id: props.content.productid },
         React.createElement(Itemimage, { imagecontent: props.content.itemimg }),
-        React.createElement(Itemdescript, { desccontent: props.content.brand + props.content.name, price: props.content.price }),
+        React.createElement(Itemdescript, { productbrand: props.content.brand, productname: props.content.name,
+            price: props.content.price, productid: props.content.productid,
+            rating: props.content.rating, indexes: props.indexes, starnum: props.itemnum }),
         React.createElement("div", { "class": "favoriteicon" })
     );
 }
@@ -174,54 +284,268 @@ function Itemimage(props) {
         React.createElement("img", { src: props.imagecontent })
     );
 }
-function Itemdescript(props) {
+
+function Starrating(props) {
+    var stars = [];var tempstar = props.rating;
+    var tempnum = 0;
+    for (var i = 1; i <= 5; i++) {
+        //if (tempstar <= 1) {
+        //stars.push(<Star rating={product_object.product_rating}/>);
+        //}
+        //else {
+
+        //}
+        stars.push(React.createElement(Star, { rating: (tempstar - tempnum).toFixed(2), starnum: props.starnum }));
+        tempnum++;
+        //alert(tempstar - i);
+    }
     return React.createElement(
         "div",
-        { "class": "itemdescript" },
+        { "class": 'star_rating_container ' + tempstar },
         React.createElement(
             "div",
-            { "class": "itemtitle" },
+            { "class": "star_rating" },
             React.createElement(
-                "p",
-                null,
-                props.desccontent
+                "div",
+                { "class": "rating_star star1" },
+                stars[0]
             ),
             React.createElement(
                 "div",
-                { "class": "itemstars" },
-                React.createElement(
-                    "div",
-                    null,
-                    "Stars"
-                ),
-                React.createElement(
-                    "span",
-                    null,
-                    props.ratingnumber
-                )
+                { "class": "rating_star star2" },
+                stars[1]
             ),
             React.createElement(
-                "p",
-                { "class": "pricetag" },
-                props.price
-            )
-        ),
-        React.createElement(
-            "div",
-            { "class": "itembuttons" },
+                "div",
+                { "class": "rating_star star3" },
+                stars[2]
+            ),
             React.createElement(
-                "button",
-                { type: "button", "class": "addbasketbutton" },
-                "Add to the Basket"
+                "div",
+                { "class": "rating_star star4" },
+                stars[3]
+            ),
+            React.createElement(
+                "div",
+                { "class": "rating_star star5" },
+                stars[4]
             )
         )
     );
 }
+function Star(props) {
+    var num = props.rating;
+    var starnums = "partialstar" + props.starnum;
+    var starnumurl = "url(#" + starnums + ")";
+    //alert(num);
+    if (num > 1) {
+        num = 1;
+    }
+    if (props.rating <= 0) {
+        return React.createElement(
+            "div",
+            null,
+            React.createElement(
+                "svg",
+                { width: "24", height: "24", viewBox: "0 0 24 24" },
+                React.createElement("path", { "fill-rule": "nonzero", fill: "gray", d: "M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" })
+            )
+        );
+    } //DO NOT REDEFINE LINEAR GRADIENTS OF SVGS MAKE NEW ONE IF YOU WANT SOMETHING DIFFERENT
+    else {
+            var contain1 = (num * 100).toFixed(0) + "%";
+            //alert(contain1 + "% to " + ((1 - num) * 100).toFixed(0) + "%"); 
+            var contain2 = ((1 - num) * 100).toFixed(0) + "%";
+            if (props.rating < 1) {
+                return React.createElement(
+                    "div",
+                    null,
+                    React.createElement(
+                        "svg",
+                        { viewBox: "0 0 24 24" },
+                        React.createElement(
+                            "defs",
+                            null,
+                            React.createElement(
+                                "linearGradient",
+                                { id: starnums },
+                                React.createElement("stop", { offset: contain1, stopColor: "gold" }),
+                                React.createElement("stop", { offset: contain1, stopColor: "gray" })
+                            )
+                        ),
+                        React.createElement("path", { "fill-rule": "nonzero", stroke: "black", "stroke-width": "0.5px", fill: starnumurl, d: "m12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" })
+                    )
+                );
+            } else {
+                return React.createElement(
+                    "div",
+                    null,
+                    React.createElement(
+                        "svg",
+                        { viewBox: "0 0 24 24" },
+                        React.createElement(
+                            "defs",
+                            null,
+                            React.createElement(
+                                "linearGradient",
+                                { id: "fullstar" },
+                                React.createElement("stop", { offset: 100 + "%", stopColor: "gold" }),
+                                React.createElement("stop", { offset: 100 + "%", stopColor: "gray" })
+                            )
+                        ),
+                        React.createElement("path", { "fill-rule": "nonzero", stroke: "black", "stroke-width": "0.5px", fill: "url(#fullstar)", d: "M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" })
+                    )
+                );
+            }
+        }
+}
+
+function Itemdescript(props) {
+    if (logged_user.login_state) {
+        if (props.indexes.indexOf(props.productid) != -1) {
+            return React.createElement(
+                "div",
+                { "class": "itemdescript" },
+                React.createElement(
+                    "div",
+                    { "class": "itemtitle" },
+                    React.createElement(
+                        "p",
+                        null,
+                        React.createElement(
+                            "b",
+                            { "class": "item_brandname" },
+                            props.productbrand
+                        ),
+                        props.productname
+                    ),
+                    React.createElement(
+                        "div",
+                        { "class": "itemstars" },
+                        React.createElement(Starrating, { rating: props.rating, starnum: props.starnum }),
+                        React.createElement(
+                            "span",
+                            null,
+                            props.ratingnumber
+                        )
+                    ),
+                    React.createElement(
+                        "p",
+                        { "class": "pricetag" },
+                        props.price
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    { "class": "itembuttons" },
+                    React.createElement(
+                        "button",
+                        { type: "button", "class": "addeditem", onClick: function onClick(e) {
+                                remove_basket(e);
+                            } },
+                        "In Your Basket ",
+                        React.createElement("i", { "class": "fa fa-check" })
+                    )
+                )
+            );
+        } else {
+            return React.createElement(
+                "div",
+                { "class": "itemdescript" },
+                React.createElement(
+                    "div",
+                    { "class": "itemtitle" },
+                    React.createElement(
+                        "p",
+                        null,
+                        React.createElement(
+                            "b",
+                            { "class": "item_brandname" },
+                            props.productbrand
+                        ),
+                        props.productname
+                    ),
+                    React.createElement(
+                        "div",
+                        { "class": "itemstars" },
+                        React.createElement(Starrating, { rating: props.rating, starnum: props.starnum }),
+                        React.createElement(
+                            "span",
+                            null,
+                            props.ratingnumber
+                        )
+                    ),
+                    React.createElement(
+                        "p",
+                        { "class": "pricetag" },
+                        props.price
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    { "class": "itembuttons" },
+                    React.createElement(
+                        "button",
+                        { type: "button", "class": "addbasketbutton", onClick: function onClick(e) {
+                                add_basket(e);
+                            } },
+                        "Add to the Basket"
+                    )
+                )
+            );
+        }
+    } else {
+        return React.createElement(
+            "div",
+            { "class": "itemdescript" },
+            React.createElement(
+                "div",
+                { "class": "itemtitle" },
+                React.createElement(
+                    "p",
+                    null,
+                    React.createElement(
+                        "b",
+                        { "class": "item_brandname" },
+                        props.productbrand
+                    ),
+                    props.productname
+                ),
+                React.createElement(
+                    "div",
+                    { "class": "itemstars" },
+                    React.createElement(Starrating, { rating: props.rating, starnum: props.starnum }),
+                    React.createElement(
+                        "span",
+                        null,
+                        props.ratingnumber
+                    )
+                ),
+                React.createElement(
+                    "p",
+                    { "class": "pricetag" },
+                    props.price
+                )
+            ),
+            React.createElement(
+                "div",
+                { "class": "itembuttons" },
+                React.createElement(
+                    "button",
+                    { type: "button", "class": "addbasketbutton", onClick: function onClick(e) {
+                            add_basket(e);
+                        } },
+                    "Add to the Basket"
+                )
+            )
+        );
+    }
+}
 var dbitems;
 function reqitems() {
-    var y = "";
+    var y = "lmao";
     var x = new XMLHttpRequest();
-    if (qtags.brands.length == 0 && qtags.pricerange == null) {
+    /*if (qtags.brands.length == 0 && qtags.pricerange == null) {
         y = "all=1";
         x.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
@@ -232,18 +556,21 @@ function reqitems() {
         x.open("GET", "reactexphp.php?" + y, true);
         //alert("fleximagephp.php?imageid='" + y + "'");
         x.send();
-    } else {
+    }
+    
         if (qtags.brands.length != 0) {
             if (y != "") {
                 y += "&brands=" + qtags.brands.join();
-            } else {
-                y = "brands=" + qtags.brands.join();
+            }
+            else {
+                y = "brands="+qtags.brands.join();
             }
         }
         if (qtags.pricerange != null) {
             if (y != "") {
                 y += "&pricerange=" + qtags.pricerange;
-            } else {
+            }
+            else {
                 y = "pricerange=" + qtags.pricerange;
             }
         }
@@ -256,7 +583,7 @@ function reqitems() {
         x.open("GET", "reactexphp.php?" + y, true);
         //alert("fleximagephp.php?imageid='" + y + "'");
         x.send();
-    }
+    */
 }
 var itemcut = 0;
 function itemrend(check) {
@@ -277,57 +604,58 @@ function itemrend(check) {
     }
     var actualarr = items.slice(0, itemcut + 1);
     var loc = document.querySelectorAll(".items")[leng - 1];
-    if (f.pricerange == null && f.brands.length == 0) {
-        ReactDOM.render(React.createElement(Itemstack, { itemsa: actualarr }), loc);
-    }
+    //if (f.pricerange.length == 0 && f.brands.length == 0) {
+    ReactDOM.render(React.createElement(Itemstack, { itemsa: actualarr }), loc);
+    //}
     //again, pretty redundant and inefficient without server
-    else {
-            for (var iya = 0; iya < items.length; iya++) {
-                if (f.brands.length > 0) {
-                    if (f.pricerange != null) {
-                        var format = f.pricerange.split(" ");
-                        var prilow = parseInt(format[0]);var prihigh = parseInt(format[2]);
-                        //for (var u = 0; u < f.brands.length; u++) {
-                        if (f.brands.includes(items[iya].brand) && items[iya].price < prihigh && items[iya].price > prilow) {
-                            altarr.push(items[iya]);
-                            //alert(items[i].brand);
-                            //alert(altarr[0]);
-                        }
-                        //alert(u);
-                        //}
-                    } else {
-                        if (f.brands.includes(items[iya].brand)) {
-                            altarr.push(items[iya]);
-                        }
-                    }
+    //else {
+    /*for (var iya = 0; iya < items.length; iya++) {
+        if (f.brands.length > 0) {
+            if (f.pricerange.length != null) {
+                var format = f.pricerange.split(" ");
+                var prilow = parseInt(format[0]); var prihigh = parseInt(format[2]);
+                //for (var u = 0; u < f.brands.length; u++) {
+                if ((f.brands.includes(items[iya].brand)) && (items[iya].price < prihigh && items[iya].price > prilow)) {
+                    altarr.push(items[iya]);
+                    //alert(items[i].brand);
+                    //alert(altarr[0]);
                 }
-                if (f.pricerange != null && f.brands.length <= 0) {
-                    var format = f.pricerange.split(" ");
-                    var prilow = parseInt(format[0]);var prihigh = parseInt(format[2]);
-                    if (items[iya].price < prihigh && items[iya].price > prilow) {
-                        altarr.push(items[iya]);
-                    }
+                //alert(u);
+                //}
+            }
+            else {
+                if (f.brands.includes(items[iya].brand)) {
+                    altarr.push(items[iya]);
                 }
             }
-            actualarr = altarr.slice(0, itemcut + 1);
-            ReactDOM.render(React.createElement(Itemstack, { itemsa: actualarr }), loc);
+        }*/
+    /*if ((f.pricerange.length != 0) && (f.brands.length <= 0)) {
+        var format = f.pricerange.split(" ");
+        var prilow = parseInt(format[0]); var prihigh = parseInt(format[2]);
+        if (items[iya].price < prihigh && items[iya].price > prilow) {
+            altarr.push(items[iya]);
         }
+    }*/
+    //  }
+    //actualarr = altarr.slice(0, itemcut + 1);
+    //ReactDOM.render(<Itemstack itemsa={actualarr} />, loc);
 }
 
 //////////////////////////////////////////////////
+/*bar*/
 
-var Topbar = function (_React$Component2) {
-    _inherits(Topbar, _React$Component2);
+var Topbar = function (_React$Component) {
+    _inherits(Topbar, _React$Component);
 
     function Topbar(props) {
         _classCallCheck(this, Topbar);
 
-        var _this2 = _possibleConstructorReturn(this, (Topbar.__proto__ || Object.getPrototypeOf(Topbar)).call(this, props));
+        var _this = _possibleConstructorReturn(this, (Topbar.__proto__ || Object.getPrototypeOf(Topbar)).call(this, props));
 
-        _this2.state = {
+        _this.state = {
             logo: "lol"
         };
-        return _this2;
+        return _this;
     }
 
     _createClass(Topbar, [{
@@ -345,7 +673,57 @@ var Topbar = function (_React$Component2) {
     return Topbar;
 }(React.Component);
 
+function toggle_login() {
+    var log = document.getElementById('dynamic_login_section');
+    if (log.style.display == 'flex') {
+        log.style.display = 'none';
+        return;
+    } else {
+        log.style.display = 'flex';
+        return;
+    }
+}
 function Upperbar(props) {
+    if (logged_user.login_state) {
+        return React.createElement(
+            "div",
+            { id: "upperbar" },
+            React.createElement(
+                "span",
+                null,
+                React.createElement("img", { src: "Acid_Cloud.png" })
+            ),
+            React.createElement(
+                "div",
+                { "class": "search_container" },
+                React.createElement("input", { type: "text", "class": "search_bar" }),
+                React.createElement("i", { "class": "search_icon" })
+            ),
+            React.createElement(
+                "div",
+                { "class": "logged_user_options" },
+                React.createElement(
+                    "div",
+                    { "class": "user_container" },
+                    logged_user.user_name
+                ),
+                React.createElement(
+                    "div",
+                    { "class": "icon_couple" },
+                    React.createElement(
+                        "div",
+                        { "class": "user_owned_basket" },
+                        React.createElement(
+                            "a",
+                            null,
+                            React.createElement("i", { "class": "fa fa-shopping-basket" }),
+                            '(' + logged_user.user_basket.length + ') items'
+                        )
+                    )
+                )
+            )
+        );
+    }
     return React.createElement(
         "div",
         { id: "upperbar" },
@@ -368,17 +746,8 @@ function Upperbar(props) {
                 { "class": "icon_couple" },
                 React.createElement(
                     "p",
-                    null,
+                    { onClick: toggle_login },
                     "Login"
-                )
-            ),
-            React.createElement(
-                "div",
-                { "class": "icon_couple" },
-                React.createElement(
-                    "p",
-                    null,
-                    "Favorites"
                 )
             ),
             React.createElement(
@@ -488,24 +857,26 @@ function barrend() {
     var p = document.getElementById("topbar");
     ReactDOM.render(React.createElement(Topbar, null), p);
 }
+/*barend*/
+
 var allbrands = ["Radeon", "Nvidia", "AMD", "Sony"];
 var allbrands2 = allbrands.map(function (x) {
     return x.toUpperCase();
 });
 
-var Itembrandfilter = function (_React$Component3) {
-    _inherits(Itembrandfilter, _React$Component3);
+var Itembrandfilter = function (_React$Component2) {
+    _inherits(Itembrandfilter, _React$Component2);
 
     function Itembrandfilter(props) {
         _classCallCheck(this, Itembrandfilter);
 
-        var _this3 = _possibleConstructorReturn(this, (Itembrandfilter.__proto__ || Object.getPrototypeOf(Itembrandfilter)).call(this, props));
+        var _this2 = _possibleConstructorReturn(this, (Itembrandfilter.__proto__ || Object.getPrototypeOf(Itembrandfilter)).call(this, props));
 
-        _this3.brandsearch = _this3.brandsearch.bind(_this3);
-        _this3.state = {
+        _this2.brandsearch = _this2.brandsearch.bind(_this2);
+        _this2.state = {
             brand: "none"
         };
-        return _this3;
+        return _this2;
     }
 
     _createClass(Itembrandfilter, [{
@@ -580,36 +951,36 @@ function Brandchecks(props) {
         <label for={props.labname}>{props.labname}</label>
     </div>;
 }*/
-var qtags = { brands: [], pricerange: null, another: null };
-function sortadjust() {
+/*function sortadjust() {
     //var tagsec = document.getElementById("sorttags");
     if (this.checked == true) {
         alert("checked");
         tagsec.style.display = "flex";
         qtags.push(this.value);
         Mod.sortbarrend(qtags);
-    } else {
+    }
+    else {
         alert("unchecked");
         tagsec.style.display = "none";
         var ind = qtags.indexOf(this.value);
         qtags.splice(ind, 1);
     }
-}
+}*/
 
-var Checkboxcr = function (_React$Component4) {
-    _inherits(Checkboxcr, _React$Component4);
+var Checkboxcr = function (_React$Component3) {
+    _inherits(Checkboxcr, _React$Component3);
 
     function Checkboxcr(props) {
         _classCallCheck(this, Checkboxcr);
 
-        var _this4 = _possibleConstructorReturn(this, (Checkboxcr.__proto__ || Object.getPrototypeOf(Checkboxcr)).call(this, props));
+        var _this3 = _possibleConstructorReturn(this, (Checkboxcr.__proto__ || Object.getPrototypeOf(Checkboxcr)).call(this, props));
 
-        _this4.checkhandle = _this4.checkhandle.bind(_this4);
-        _this4.state = {
+        _this3.checkhandle = _this3.checkhandle.bind(_this3);
+        _this3.state = {
             checked: false,
             labname: props.labname
         };
-        return _this4;
+        return _this3;
     } //this entire class seems completely unnecessary compared to just function comp and jscript addevent loop
 
 
@@ -619,6 +990,7 @@ var Checkboxcr = function (_React$Component4) {
             if (e.target.checked == true) {
                 qtags.brands.push(e.target.value);
                 reqitems();
+                query_search();
                 itemrend(false);
                 sortbarrend(qtags);
                 window.scrollTo(0, 0);
@@ -627,6 +999,7 @@ var Checkboxcr = function (_React$Component4) {
             if (e.target.checked == false) {
                 qtags.brands.splice(qtags.brands.indexOf(e.target.value), 1);
                 reqitems();
+                query_search();
                 itemrend(false);
                 sortbarrend(qtags);
                 window.scrollTo(0, 0);
@@ -668,20 +1041,24 @@ function tagcancel(e) {
     if (radiotext[0].value + " - " + radiotext[1].value == e.target.parentElement.children[0].innerHTML) {
         radiotext[0].value = "";
         radiotext[1].value = "";
-        qtags.pricerange = null;
+        qtags.pricerange[0] = null;
+        qtags.pricerange[1] = null;
     }
     for (var x = 0; x < radios.length; x++) {
         if (radios[x].value == e.target.parentElement.children[0].innerHTML) {
             radios[x].checked = false;
-            qtags.pricerange = null;
+            qtags.pricerange[0] = null;
+            qtags.pricerange[1] = null;
         }
     }
     if (lowprice == null || lowprice == "" || highprice == null || highprice == "") {
         //qtags.pricerange = null;
     } else {
-        qtags.pricerange = null;
+        qtags.pricerange[0] = null;
+        qtags.pricerange[1] = null;
     }
     reqitems();
+    query_search();
     itemrend(false);
     sortbarrend(qtags);
     window.scrollTo(0, 0);
@@ -698,8 +1075,9 @@ function manualpriceenter() {
         return;
     } else {
         var fulprice = lowprice + " - " + highprice;
-        qtags.pricerange = fulprice;
+        qtags.pricerange[0] = lowprice;qtags.pricerange[1] = highprice;
         reqitems();
+        query_search();
         itemrend(false);
         window.scrollTo(0, 0);
         sortbarrend(qtags);
@@ -707,16 +1085,16 @@ function manualpriceenter() {
 }
 var pricerange = [{ lower: 50, upper: 100 }, { lower: 100, upper: 200 }, { lower: 200, upper: 500 }, { lower: 500, upper: 1000 }];
 
-var Pricesortbar = function (_React$Component5) {
-    _inherits(Pricesortbar, _React$Component5);
+var Pricesortbar = function (_React$Component4) {
+    _inherits(Pricesortbar, _React$Component4);
 
     function Pricesortbar(props) {
         _classCallCheck(this, Pricesortbar);
 
-        var _this5 = _possibleConstructorReturn(this, (Pricesortbar.__proto__ || Object.getPrototypeOf(Pricesortbar)).call(this, props));
+        var _this4 = _possibleConstructorReturn(this, (Pricesortbar.__proto__ || Object.getPrototypeOf(Pricesortbar)).call(this, props));
 
-        _this5.state = {};
-        return _this5;
+        _this4.state = {};
+        return _this4;
     }
 
     _createClass(Pricesortbar, [{
@@ -772,27 +1150,29 @@ function Pricerangeradios(props) {
     );
 }
 
-var Priceradio = function (_React$Component6) {
-    _inherits(Priceradio, _React$Component6);
+var Priceradio = function (_React$Component5) {
+    _inherits(Priceradio, _React$Component5);
 
     function Priceradio(props) {
         _classCallCheck(this, Priceradio);
 
-        var _this6 = _possibleConstructorReturn(this, (Priceradio.__proto__ || Object.getPrototypeOf(Priceradio)).call(this, props));
+        var _this5 = _possibleConstructorReturn(this, (Priceradio.__proto__ || Object.getPrototypeOf(Priceradio)).call(this, props));
 
-        _this6.handle = _this6.handle.bind(_this6);
-        _this6.state = {
+        _this5.handle = _this5.handle.bind(_this5);
+        _this5.state = {
             content: props.content
         };
-        return _this6;
+        return _this5;
     }
 
     _createClass(Priceradio, [{
         key: "handle",
         value: function handle(e) {
             if (e.target.checked == true) {
-                qtags.pricerange = e.target.value;
+                qtags.pricerange[0] = e.target.value.split('-')[0];
+                qtags.pricerange[1] = e.target.value.split('-')[1];
                 reqitems();
+                query_search();
                 itemrend(false);
                 sortbarrend(qtags);
                 window.scrollTo(0, 0);
@@ -868,30 +1248,32 @@ function Sortselect(props) {
 function Itemsorttags(props) {
     var tagse = props.tags;
     var spans = [];
-    for (var k = 0; k < tagse.brands.length; k++) {
-        spans.push(React.createElement(
-            "div",
-            { "class": "sorttag" },
-            React.createElement(
-                "span",
-                { "class": "sorttagname" },
-                tagse.brands[k]
-            ),
-            React.createElement(
-                "span",
-                { "class": "cancelsortbut", onClick: tagcancel },
-                "X"
-            )
-        ));
+    if (tagse.brands.length != 0) {
+        for (var k = 0; k < tagse.brands.length; k++) {
+            spans.push(React.createElement(
+                "div",
+                { "class": "sorttag" },
+                React.createElement(
+                    "span",
+                    { "class": "sorttagname" },
+                    tagse.brands[k]
+                ),
+                React.createElement(
+                    "span",
+                    { "class": "cancelsortbut", onClick: tagcancel },
+                    "X"
+                )
+            ));
+        }
     }
-    if (tagse.pricerange != null) {
+    if (tagse.pricerange[0] != null && tagse.pricerange[0] != '' && tagse.pricerange[1] != null && tagse.pricerange[1] != '') {
         spans.push(React.createElement(
             "div",
             { "class": "sorttag" },
             React.createElement(
                 "span",
                 { "class": "sorttagname" },
-                tagse.pricerange
+                tagse.pricerange[0] + "-" + tagse.pricerange[1]
             ),
             React.createElement(
                 "span",
